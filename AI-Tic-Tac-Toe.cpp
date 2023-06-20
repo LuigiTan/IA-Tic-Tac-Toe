@@ -10,19 +10,59 @@ const char NO_ONE = 'N';
 const char TIE = 'T';
 const char X = 'x';
 const char O = 'o';
+
+
 void instructions();
 char playerSymbol();
 char OponentSymbol(char Symbol);
 char winner(const vector<char>& board);
-bool AskYesNo(string question);
+char AskYesNo(string question);
+void displayboard(const vector<char>& board);
+int askNumber(string question, int high, int low = 1);
+bool IsLegal(const vector<char>& board, int LastMove);
+
 
 int main()
 {
-    char Player = playerSymbol()? X : O;
-    char Computer = Player == X? O : X;
-    char Turn = X;
-    vector<char> board(NUM_SQUARES, EMPTY);    
+    int move = 0;
+    vector<char> board(NUM_SQUARES, EMPTY);
     instructions();
+    char Player = playerSymbol();
+    char Computer = Player == X ? O : X;
+    //char Computer = Player == X ? O : X;
+    char Turn = X;
+
+
+    while (winner(board) == NO_ONE)
+    {
+        if (Turn == Player)
+        {
+            cout << "Testing: el jugador va a introducir el valor de los dos casos" << endl;
+            cout << "Este es el turno del jugador" << endl;
+            do {
+            move = askNumber("\nElige un numero ", 8);
+            } while (IsLegal(board, move) == false);
+            board[move] = Player;
+            Turn = Computer;
+           
+        }
+        else
+        {
+            cout << "Testing: el jugador va a introducir el valor de los dos casos" << endl;
+            cout << "Este es el turno de la maquina" << endl;
+            do {
+            move = askNumber("\nElige un numero ", 8);
+            } while (IsLegal(board, move) == false);
+            board[move] = Computer;
+            Turn = Player;
+                
+        }
+        
+        displayboard(board);
+    }
+
+
+    
 }
 
 
@@ -69,21 +109,16 @@ char OponentSymbol(char Symbol)
     }
 }
 
-bool AskYesNo(string question)
+char AskYesNo(string question)
 {
     char answer;
 
     do {
         cout << "\n" << question << "(y/n)";
         cin >> answer;
-    } while (answer != 'y' && answer != 'n');
-
-   if(answer=='y'){
-       return true;
-   }
-   else {
-       return false;
-   }
+    }while(answer != 'y' && answer != 'n');
+       
+    return answer;  
 
 }
 //Return the piece winner a tie or noBody
@@ -119,3 +154,67 @@ char winner(const vector<char>& board)
     //Return that no one is the winner yet
     return NO_ONE;
 }
+void displayboard(const vector<char>& board)
+{
+    cout << "| " << board[0] << " | " << board[1] << " | " << board[2] << " |" << endl;
+    cout << "| " << board[3] << " | " << board[4] << " | " << board[5] << " |" << endl;
+    cout << "| " << board[6] << " | " << board[7] << " | " << board[8] << " |" << endl;
+}
+
+int askNumber(string question, int high, int low)
+{
+    string input;
+    bool isValid = false;
+    //int number = 0;
+
+    //do {
+        cout << question << "entre " << low << " y " << high << endl;
+        cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');//La segunda vez que se habla a esta funcion, esta linea hace que el proceso se detenga para leer un input del usuario que no va ninguna parte 
+      do {
+          cout << "The Do is doing its job correcly" << endl;//Una vez se le da enter a la linea de arriba el proceso sigue a esa linea y todo funciona como deberia 
+        getline(cin, input);
+        //cin>> input;
+    
+        for (char c : input)
+        {
+            if (isdigit(c))
+            {
+                isValid = true;
+                cout << "Test, The input is valid\n";
+                break;
+            }
+            cout << "Test, outside the if\n";
+        }
+        if (!isValid)///Lo mismo que if(isvalid == false)
+        {
+            cout << "\nEntrada invalida, porfavor elige solo numeros.\n";
+        }
+        else if (isValid)
+        {
+            if (stoi(input) < low || stoi(input) > high)
+            {
+                cout << "Numero muy bajo o muy alto, introduce otro numero" << endl;
+                isValid = false;
+            }
+        }
+
+    } while (!isValid || input.empty());
+    //number > high || number < low);
+
+    return stoi(input);
+}
+
+bool IsLegal(const vector<char>& board, int LastMove)
+{
+    if (board[LastMove] != ' ')
+    {
+        cout << "El espacio seleccionado ya fue tomado, elige otro" << endl;
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+
+}
+
