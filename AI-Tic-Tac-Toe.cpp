@@ -14,9 +14,11 @@ const char O = 'o';
 
 void instructions();
 char playerSymbol();
+char RandomPlayerSymbol();
 char OponentSymbol(char Symbol);
 char winner(const vector<char>& board);
 char AskYesNo(string question);
+char AskParImpar(string question);
 void displayboard(const vector<char>& board);
 int askNumber(string question, int high, int low = 1);
 bool IsLegal(const vector<char>& board, int LastMove);
@@ -27,7 +29,8 @@ int main()
     int move = 0;
     vector<char> board(NUM_SQUARES, EMPTY);
     instructions();
-    char Player = playerSymbol();
+    //char Player = playerSymbol();
+    char Player = RandomPlayerSymbol();
     char Computer = Player == X ? O : X;
     //char Computer = Player == X ? O : X;
     char Turn = X;
@@ -66,6 +69,7 @@ int main()
 }
 
 
+
 void instructions()
 {
     char boardoptions[ROWS][COLUMNS] = { {'0', '1', '2'},
@@ -84,6 +88,49 @@ void instructions()
         cout << endl;
     }
 }
+
+char RandomPlayerSymbol()
+{
+    //bool CheckingRandom = true;
+    //do
+    //{
+        srand(time(NULL));
+       
+        int DiceRoll = rand() % (6 - 1 + 1) + 1;
+        char GoFirst = AskParImpar("Se seleccionara un numero al azar, si adivinas que es empezaras tu. Sera Par o Impar?");
+        cout << "\nEl numero del dado fue: " << DiceRoll << endl;
+        if (GoFirst == 'p')
+        {
+            if (DiceRoll % 2 == 0)
+            {
+                cout << "Le atinaste!! Empiezas tu. Player = X" << endl;
+                
+                return X;
+            }
+            else
+            {
+                cout << "No le atinaste... La maquina empieza. Player = O" << endl;
+                return O;
+            }
+        }
+        else
+        {
+            if (DiceRoll % 2 != 0)
+            {
+                cout << "Le atinaste!! Empiezas tu. Player = X" << endl;
+                return X;
+            }
+            else
+            {
+                cout << "No le atinaste... La maquina empieza. Player = O" << endl;
+                return O;
+            }
+
+        }
+    //} while (CheckingRandom);
+    //return X;
+}
+
 
 char playerSymbol()
 {
@@ -107,6 +154,19 @@ char OponentSymbol(char Symbol)
     {
         return X;
     }
+}
+
+char AskParImpar(string question)
+{
+    char answer;
+
+    do {
+        cout << "\n" << question << "(p/i)";
+        cin >> answer;
+    } while (answer != 'p' && answer != 'i');
+
+    return answer;
+
 }
 
 char AskYesNo(string question)
